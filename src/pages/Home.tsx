@@ -78,8 +78,7 @@ export default function Home() {
               Est. 18th Century / Hooghly, West Bengal
             </span>
             <h1 className="text-6xl md:text-8xl font-serif font-bold leading-tight mb-8">
-              Jamgram Ghoshbari <br /> 
-              <span className="italic text-heritage-gold font-normal">Durga Dalan.</span>
+              Jamgram Ghoshbari
             </h1>
             <p className="text-xl text-stone-200 leading-relaxed mb-10 max-w-xl font-serif italic">
               "Jamgram is a small village in the Hooghly district. In this village, two Durga pujas are held, one of the Ghosh Family—the oldest, spanning over 250 years of tradition at the historic Durga Dalan."
