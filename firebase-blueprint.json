@@ -53,7 +53,8 @@
       "description": "Global configuration for the website",
       "type": "object",
       "properties": {
-        "logoUrl": { "type": "string", "format": "uri", "description": "URL of the site logo" }
+        "logoUrl": { "type": "string", "format": "uri", "description": "URL of the site logo" },
+        "nextPostAt": { "type": "string", "format": "date-time", "description": "Timestamp for the next expected post" }
       }
     }
   },

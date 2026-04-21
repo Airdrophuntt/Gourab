@@ -136,93 +136,95 @@ export default function PostView() {
         transition={{ duration: 0.6 }}
       >
         {/* Post Header */}
-        <div className="max-w-4xl mx-auto px-4 pt-20">
-          <Link to="/" className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 transition-colors mb-12 group">
+        <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-20">
+          <Link to="/" className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 transition-colors mb-8 md:mb-12 group">
             <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" /> Back to explore
           </Link>
 
-          <header className="mb-16">
-            <h1 className="text-5xl md:text-7xl font-serif font-bold leading-tight mb-8">
+          <header className="mb-12 md:mb-16">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif font-bold leading-tight mb-8">
               {post.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-8 text-sm text-stone-500 border-y border-stone-200 py-6">
+            <div className="flex flex-wrap items-center gap-6 md:gap-8 text-sm text-stone-500 border-y border-stone-200 py-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center overflow-hidden shrink-0">
                   <User size={20} className="text-stone-500" />
                 </div>
                 <div>
-                  <span className="block text-stone-900 font-bold">{post.authorName}</span>
-                  <span className="block text-xs uppercase tracking-wider">Author</span>
+                  <span className="block text-stone-900 font-bold leading-none mb-1">{post.authorName}</span>
+                  <span className="block text-[10px] uppercase tracking-wider">Author</span>
                 </div>
               </div>
               
               <div className="flex items-center gap-3">
                 <Calendar size={20} className="text-stone-400" />
                 <div>
-                  <span className="block text-stone-900 font-bold">
+                  <span className="block text-stone-900 font-bold leading-none mb-1">
                     {post.createdAt ? format(post.createdAt.toDate(), 'MMMM d, yyyy') : 'Unknown Date'}
                   </span>
-                  <span className="block text-xs uppercase tracking-wider">Published</span>
+                  <span className="block text-[10px] uppercase tracking-wider">Published</span>
                 </div>
               </div>
 
-              <div className="ml-auto flex items-center gap-2">
-                <span className="text-xs uppercase tracking-widest font-bold text-stone-400 mr-2 hidden sm:inline">Share:</span>
-                <a 
-                  href={shareLinks.twitter} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-stone-100 hover:bg-stone-800 hover:text-white p-2.5 rounded-full transition-all duration-300 text-stone-900"
-                  title="Share on Twitter"
-                >
-                  <Twitter size={18} />
-                </a>
-                <a 
-                  href={shareLinks.facebook} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-stone-100 hover:bg-stone-800 hover:text-white p-2.5 rounded-full transition-all duration-300 text-stone-900"
-                  title="Share on Facebook"
-                >
-                  <Facebook size={18} />
-                </a>
-                <a 
-                  href={shareLinks.linkedin} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-stone-100 hover:bg-stone-800 hover:text-white p-2.5 rounded-full transition-all duration-300 text-stone-900"
-                  title="Share on LinkedIn"
-                >
-                  <Linkedin size={18} />
-                </a>
-                <button 
-                  onClick={handleCopyLink}
-                  className="relative bg-stone-100 hover:bg-stone-800 hover:text-white p-2.5 rounded-full transition-all duration-300 text-stone-900"
-                  title="Copy link"
-                >
-                  <AnimatePresence mode="wait">
-                    {copied ? (
-                      <motion.div
-                        key="check"
-                        initial={{ scale: 0.5, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.5, opacity: 0 }}
-                      >
-                        <Check size={18} className="text-green-500" />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="copy"
-                        initial={{ scale: 0.5, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.5, opacity: 0 }}
-                      >
-                        <LinkIcon size={18} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </button>
+              <div className="w-full md:w-auto md:ml-auto flex items-center gap-2 pt-4 md:pt-0 border-t md:border-t-0 border-stone-100">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mr-2">Share Story:</span>
+                <div className="flex items-center gap-2">
+                  <a 
+                    href={shareLinks.twitter} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-stone-100 hover:bg-stone-800 hover:text-white p-2 md:p-2.5 rounded-full transition-all duration-300 text-stone-900"
+                    title="Share on Twitter"
+                  >
+                    <Twitter size={16} />
+                  </a>
+                  <a 
+                    href={shareLinks.facebook} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-stone-100 hover:bg-stone-800 hover:text-white p-2 md:p-2.5 rounded-full transition-all duration-300 text-stone-900"
+                    title="Share on Facebook"
+                  >
+                    <Facebook size={16} />
+                  </a>
+                  <a 
+                    href={shareLinks.linkedin} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-stone-100 hover:bg-stone-800 hover:text-white p-2 md:p-2.5 rounded-full transition-all duration-300 text-stone-900"
+                    title="Share on LinkedIn"
+                  >
+                    <Linkedin size={16} />
+                  </a>
+                  <button 
+                    onClick={handleCopyLink}
+                    className="relative bg-stone-100 hover:bg-stone-800 hover:text-white p-2 md:p-2.5 rounded-full transition-all duration-300 text-stone-900"
+                    title="Copy link"
+                  >
+                    <AnimatePresence mode="wait">
+                      {copied ? (
+                        <motion.div
+                          key="check"
+                          initial={{ scale: 0.5, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.5, opacity: 0 }}
+                        >
+                          <Check size={16} className="text-green-500" />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="copy"
+                          initial={{ scale: 0.5, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.5, opacity: 0 }}
+                        >
+                          <LinkIcon size={16} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </button>
+                </div>
               </div>
             </div>
           </header>
@@ -231,34 +233,34 @@ export default function PostView() {
 
         {/* Featured Image */}
         {post.imageUrl && (
-          <div className="max-w-6xl mx-auto px-4 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          <div className="max-w-6xl mx-auto px-4 mb-12 md:mb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <img 
               src={post.imageUrl} 
               alt={post.title} 
-              className="w-full h-auto max-h-[70vh] object-cover rounded-3xl shadow-2xl"
+              className="w-full h-auto max-h-[60vh] md:max-h-[70vh] object-cover rounded-xl md:rounded-3xl shadow-xl md:shadow-2xl"
               referrerPolicy="no-referrer"
             />
           </div>
         )}
 
         {/* Post Body */}
-        <div className="max-w-3xl mx-auto px-4 pb-16 border-b border-stone-200">
+        <div className="max-w-3xl mx-auto px-4 pb-12 md:pb-16 border-b border-stone-200">
           <div className="markdown-body prose prose-stone lg:prose-xl max-w-none">
             <ReactMarkdown>{post.content}</ReactMarkdown>
           </div>
         </div>
 
         {/* Comment Section */}
-        <section className="max-w-3xl mx-auto px-4 py-20">
-          <div className="flex items-center gap-3 mb-12">
+        <section className="max-w-3xl mx-auto px-4 py-12 md:py-20">
+          <div className="flex items-center gap-3 mb-8 md:mb-12">
             <MessageSquare size={24} className="text-heritage-gold" />
-            <h2 className="text-3xl font-serif font-bold">Family Feedback & Comments</h2>
+            <h2 className="text-2xl md:text-3xl font-serif font-bold">Family Feedback</h2>
           </div>
 
           {/* Comment Form */}
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100 mb-16">
-            <h3 className="font-serif text-xl font-bold mb-6">Leave a message</h3>
-            <form onSubmit={handleCommentSubmit} className="space-y-6">
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-100 mb-12 md:mb-16">
+            <h3 className="font-serif text-lg md:text-xl font-bold mb-6">Leave a message</h3>
+            <form onSubmit={handleCommentSubmit} className="space-y-4 md:space-y-6">
               <div>
                 <label className="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">Your Name</label>
                 <input 
@@ -266,7 +268,7 @@ export default function PostView() {
                   required
                   value={newCommentName}
                   onChange={(e) => setNewCommentName(e.target.value)}
-                  className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-heritage-gold focus:border-transparent outline-none transition-all font-serif"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-2.5 md:py-3 focus:ring-2 focus:ring-heritage-gold focus:border-transparent outline-none transition-all font-serif"
                   placeholder="e.g. Rahul Ghosh"
                 />
               </div>
@@ -278,13 +280,13 @@ export default function PostView() {
                   value={newCommentContent}
                   onChange={(e) => setNewCommentContent(e.target.value)}
                   className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-heritage-gold focus:border-transparent outline-none transition-all font-serif resize-none"
-                  placeholder="Share your thoughts about this chronicle..."
+                  placeholder="Share your thoughts..."
                 />
               </div>
               <button 
                 type="submit"
                 disabled={submitting}
-                className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-3 md:py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
                   commentSuccess 
                   ? 'bg-green-600 text-white' 
                   : 'bg-heritage-ink text-white hover:bg-stone-800'
@@ -293,7 +295,7 @@ export default function PostView() {
                 {submitting ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : commentSuccess ? (
-                  <><Check size={18} /> Message Sent Successfully</>
+                  <><Check size={18} /> Sent Successfully</>
                 ) : (
                   <><Send size={18} /> Post Comment</>
                 )}

@@ -4,7 +4,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Plus, Edit3, Trash2, Eye, EyeOff, Search, MoreHorizontal, FileText, Image as ImageIcon, CheckCircle, Loader2, UploadCloud } from 'lucide-react';
+import { Plus, Edit3, Trash2, Eye, EyeOff, Search, MoreHorizontal, FileText, Image as ImageIcon, CheckCircle, Loader2, UploadCloud, Timer as TimerIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Post {
@@ -22,15 +22,40 @@ export default function AdminDashboard() {
   const [logoUploadLoading, setLogoUploadLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [nextPostAt, setNextPostAt] = useState<string>('');
+  const [timerLoading, setTimerLoading] = useState(false);
 
   const fetchLogo = async () => {
     try {
       const snap = await getDoc(doc(db, 'settings', 'site'));
       if (snap.exists()) {
         setLogoUrl(snap.data().logoUrl);
+        if (snap.data().nextPostAt) {
+          const date = snap.data().nextPostAt.toDate();
+          // Format for datetime-local input: YYYY-MM-DDTHH:mm
+          const formatted = date.toISOString().slice(0, 16);
+          setNextPostAt(formatted);
+        }
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const updateTimer = async () => {
+    if (!nextPostAt) return;
+    setTimerLoading(true);
+    try {
+      await setDoc(doc(db, 'settings', 'site'), {
+        nextPostAt: new Date(nextPostAt),
+        updatedAt: new Date()
+      }, { merge: true });
+      alert("Countdown timer updated!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update timer");
+    } finally {
+      setTimerLoading(false);
     }
   };
 
@@ -227,6 +252,37 @@ export default function AdminDashboard() {
                 />
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Countdown Timer Section */}
+      <section className="mb-12 bg-heritage-ink border border-heritage-gold/20 rounded-2xl p-6 text-white">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 rounded-2xl bg-heritage-gold/10 flex items-center justify-center text-heritage-gold shrink-0">
+              <TimerIcon size={32} />
+            </div>
+            <div>
+              <h2 className="text-xl font-serif font-bold text-white">Next Publication Timer</h2>
+              <p className="text-sm text-stone-400 italic">Schedule a countdown on the home page to tell visitors when the next archive will be released.</p>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+            <input 
+              type="datetime-local"
+              value={nextPostAt}
+              onChange={(e) => setNextPostAt(e.target.value)}
+              className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-heritage-gold/50 transition-colors w-full sm:w-64"
+            />
+            <button 
+              onClick={updateTimer}
+              disabled={timerLoading}
+              className="flex items-center gap-2 px-6 py-3 bg-heritage-gold text-heritage-ink rounded-xl font-bold hover:bg-heritage-gold/80 transition-all w-full sm:w-auto whitespace-nowrap min-w-[140px] justify-center"
+            >
+              {timerLoading ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+              Update Timer
+            </button>
           </div>
         </div>
       </section>

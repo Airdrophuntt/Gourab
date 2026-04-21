@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { collection, query, where, orderBy, getDocs, limit } from 'firebase/firestore';
+import { collection, query, where, orderBy, getDocs, limit, doc, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
+import CountdownTimer from '../components/CountdownTimer';
 
 interface Post {
   id: string;
@@ -18,11 +19,13 @@ interface Post {
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [nextPostAt, setNextPostAt] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch posts
         const q = query(
           collection(db, 'posts'),
           where('published', '==', true),
@@ -35,14 +38,23 @@ export default function Home() {
           ...doc.data()
         } as Post));
         setPosts(fetchedPosts);
+
+        // Fetch settings for countdown
+        const settingsSnap = await getDoc(doc(db, 'settings', 'site'));
+        if (settingsSnap.exists()) {
+          const data = settingsSnap.data();
+          if (data.nextPostAt) {
+            setNextPostAt(data.nextPostAt.toDate());
+          }
+        }
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -56,7 +68,7 @@ export default function Home() {
   return (
     <div className="pb-20">
       {/* Hero Section */}
-      <section className="relative h-[85vh] flex items-center overflow-hidden bg-heritage-ink text-white">
+      <section className="relative min-h-[70vh] md:h-[85vh] flex items-center overflow-hidden bg-heritage-ink text-white py-20 md:py-0">
         <div className="absolute inset-0 opacity-50">
           <img 
             src="https://picsum.photos/seed/bengali-festival/1920/1080" 
@@ -77,23 +89,18 @@ export default function Home() {
             <span className="uppercase tracking-[0.4em] text-[10px] font-bold text-heritage-gold mb-6 block border-l-2 border-heritage-gold pl-4">
               Est. 18th Century / Hooghly, West Bengal
             </span>
-            <h1 className="text-6xl md:text-8xl font-serif font-bold leading-tight mb-8">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-serif font-bold leading-tight mb-8">
               Jamgram Ghoshbari
             </h1>
-            <p className="text-xl text-stone-200 leading-relaxed mb-10 max-w-xl font-serif italic">
+            <p className="text-lg md:text-xl text-stone-200 leading-relaxed mb-10 max-w-xl font-serif italic">
               "Jamgram is a small village in the Hooghly district. In this village, two Durga pujas are held, one of the Ghosh Family—the oldest, spanning over 250 years of tradition at the historic Durga Dalan."
             </p>
-            <div className="flex gap-4">
-              <a href="#archives" className="bg-heritage-gold hover:bg-heritage-gold/80 text-heritage-ink px-8 py-4 rounded-full font-bold transition-all flex items-center gap-2 shadow-lg shadow-heritage-gold/20">
-                Explore Archives <ArrowRight size={18} />
-              </a>
-            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Main Content */}
-      <section id="archives" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10 pb-20">
+      <section id="archives" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 md:-mt-20 relative z-10 pb-20">
         {posts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {posts.map((post, index) => (
@@ -104,7 +111,7 @@ export default function Home() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Link to={`/post/${post.id}`} className="group block bg-[#fdfaf3] rounded-sm overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-heritage-gold/20 p-2">
-                  <div className="relative h-72 overflow-hidden rounded-sm">
+                  <div className="relative h-60 md:h-72 overflow-hidden rounded-sm">
                     <img 
                       src={post.imageUrl || `https://picsum.photos/seed/${post.id}/800/600`}
                       alt={post.title}
@@ -113,8 +120,8 @@ export default function Home() {
                     />
                     <div className="absolute inset-0 bg-heritage-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <div className="p-8">
-                    <div className="flex items-center gap-4 text-[10px] text-heritage-gold mb-4 uppercase tracking-[0.2em] font-bold">
+                  <div className="p-6 md:p-8">
+                    <div className="flex flex-wrap items-center gap-3 md:gap-4 text-[10px] text-heritage-gold mb-4 uppercase tracking-[0.2em] font-bold">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} />
                         {post.createdAt ? format(post.createdAt.toDate(), 'MMM d, yyyy') : 'Recently'}
@@ -124,10 +131,10 @@ export default function Home() {
                         {post.authorName}
                       </span>
                     </div>
-                    <h3 className="text-2xl font-serif font-bold mb-4 group-hover:text-heritage-accent transition-colors leading-snug">
+                    <h3 className="text-xl md:text-2xl font-serif font-bold mb-4 group-hover:text-heritage-accent transition-colors leading-snug">
                       {post.title}
                     </h3>
-                    <p className="text-heritage-ink/70 line-clamp-3 leading-relaxed mb-8 text-sm italic font-serif">
+                    <p className="text-heritage-ink/70 line-clamp-3 leading-relaxed mb-6 md:mb-8 text-sm italic font-serif">
                       {post.summary}
                     </p>
                     <div className="flex items-center gap-2 text-heritage-blue font-bold uppercase tracking-widest text-[10px] group/btn border-t border-heritage-gold/10 pt-6">
@@ -139,11 +146,16 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl p-20 text-center shadow-sm border border-stone-100">
+          <div className="bg-white rounded-2xl p-10 md:p-20 text-center shadow-sm border border-stone-100">
             <p className="text-stone-400 text-lg">No stories have been shared yet. Check back soon.</p>
           </div>
         )}
       </section>
+
+      {/* Countdown Section */}
+      {nextPostAt && nextPostAt > new Date() && (
+        <CountdownTimer targetDate={nextPostAt} />
+      )}
     </div>
   );
 }
