@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { User, signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { LogOut, PenTool, LayoutDashboard, User as UserIcon } from 'lucide-react';
+import { LogOut, PenTool, LayoutDashboard, User as UserIcon, Facebook } from 'lucide-react';
 
 interface HeaderProps {
   user: User | null;
@@ -40,6 +40,19 @@ export default function Header({ user, isAdmin, logoUrl }: HeaderProps) {
         </Link>
 
         <nav className="flex items-center space-x-4 lg:space-x-8">
+          <a 
+            href="https://www.facebook.com/share/g/1CMA8Eh7b8/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="flex items-center gap-2 text-heritage-ink/60 hover:text-[#1877F2] transition-all hover:scale-110"
+            title="Join our Facebook Community"
+          >
+            <Facebook size={20} fill="currentColor" strokeWidth={0} />
+            <span className="hidden xl:inline text-[10px] uppercase tracking-widest font-bold">Community</span>
+          </a>
+
+          <div className="h-6 w-px bg-heritage-gold/20 hidden sm:block" />
+
           {isAdmin ? (
             <>
               <Link to="/admin" className="flex items-center gap-2 text-heritage-ink/70 hover:text-heritage-accent font-medium transition-all hover:translate-y-[-1px]">
