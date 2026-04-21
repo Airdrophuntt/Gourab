@@ -13,6 +13,8 @@ import PostView from './pages/PostView';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import Editor from './pages/Editor';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import FamilyTerms from './pages/FamilyTerms';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -70,6 +72,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/post/:id" element={<PostView />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<FamilyTerms />} />
             <Route path="/admin/login" element={<AdminLogin user={user} isAdmin={isAdmin} />} />
             <Route 
               path="/admin" 

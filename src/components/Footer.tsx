@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 interface FooterProps {
   logoUrl?: string | null;
 }
@@ -28,8 +30,8 @@ export default function Footer({ logoUrl }: FooterProps) {
           <div>
             <h4 className="text-heritage-gold font-medium mb-6 uppercase tracking-[0.2em] text-[10px] font-bold">Explore Content</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="/#archives" className="hover:text-white transition-colors">Digital Archives</a></li>
-              <li><a href="/admin/login" className="hover:text-white transition-colors">Admin Access</a></li>
+              <li><Link to="/#archives" className="hover:text-white transition-colors">Digital Archives</Link></li>
+              <li><Link to="/admin/login" className="hover:text-white transition-colors">Admin Access</Link></li>
             </ul>
           </div>
           <div>
@@ -42,8 +44,8 @@ export default function Footer({ logoUrl }: FooterProps) {
         <div className="flex flex-col sm:flex-row justify-between items-center text-[10px] uppercase tracking-widest font-bold text-stone-500">
           <p>&copy; {new Date().getFullYear()} Jamgram Ghoshbari Heritage. All rights reserved.</p>
           <div className="mt-4 sm:mt-0 flex space-x-8">
-            <span className="hover:text-heritage-gold cursor-pointer transition-colors">Cultural Privacy</span>
-            <span className="hover:text-heritage-gold cursor-pointer transition-colors">Family Terms</span>
+            <Link to="/privacy" className="hover:text-heritage-gold transition-colors underline-offset-4 hover:underline">Cultural Privacy</Link>
+            <Link to="/terms" className="hover:text-heritage-gold transition-colors underline-offset-4 hover:underline">Family Terms</Link>
           </div>
         </div>
       </div>
