@@ -1,0 +1,53 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Blog Post",
+      "description": "A single blog post entry",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "The title of the post" },
+        "content": { "type": "string", "description": "Markdown content of the post" },
+        "summary": { "type": "string", "description": "Short summary for the index page" },
+        "authorId": { "type": "string", "description": "UID of the admin who created the post" },
+        "authorName": { "type": "string", "description": "Display name of the author" },
+        "imageUrl": { "type": "string", "format": "uri", "description": "URL of the featured image" },
+        "published": { "type": "boolean", "description": "Whether the post is public" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the post was created" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the post was last updated" }
+      },
+      "required": ["title", "content", "authorId", "createdAt"]
+    },
+    "Admin": {
+      "title": "Admin User",
+      "description": "Metadata for admin users",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin"] }
+      },
+      "required": ["email", "role"]
+    },
+    "Settings": {
+      "title": "Site Settings",
+      "description": "Global configuration for the website",
+      "type": "object",
+      "properties": {
+        "logoUrl": { "type": "string", "format": "uri", "description": "URL of the site logo" }
+      }
+    }
+  },
+  "firestore": {
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Collection of all blog posts"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Collection identifying admin users"
+    },
+    "/settings/site": {
+      "schema": "Settings",
+      "description": "Global site settings document"
+    }
+  }
+}

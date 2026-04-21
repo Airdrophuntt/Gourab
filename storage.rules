@@ -1,0 +1,30 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper to check if user is the site owner
+    function isOwner() {
+      return isSignedIn() && request.auth.token.email == 'ghoshgourab765@gmail.com';
+    }
+
+    // Helper: Check if user is an admin (needs Firestore lookup usually, 
+    // but in Storage we often simplify to owner or just signed-in for specific paths)
+    // For simplicity, we trust any signed-in user for blog-images but restrict to owner for branding
+    
+    // Blog Images: Any logged in admin/user can upload
+    match /blog-images/{allPaths=**} {
+      allow read: if true; // Publicly readable
+      allow write: if isSignedIn(); 
+    }
+
+    // Site Branding: Only the owner can change
+    match /site-branding/{allPaths=**} {
+      allow read: if true; // Publicly readable
+      allow write: if isOwner();
+    }
+  }
+}

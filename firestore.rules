@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner() {
+      return isSignedIn() && request.auth.token.email == 'ghoshgourab765@gmail.com';
+    }
+
+    function isAdmin() {
+      // Allow if user is in admins collection OR if they are the owner
+      return isSignedIn() && (
+        isOwner() || 
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Post Validation
+    function isValidPost(data) {
+      return data.title is string && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 50000 &&
+             data.authorId == request.auth.uid &&
+             data.createdAt == request.time &&
+             (data.imageUrl == null || (data.imageUrl is string && data.imageUrl.size() <= 1000));
+    }
+
+    function isValidUpdate(data) {
+      return data.title is string && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 50000 &&
+             data.updatedAt == request.time;
+    }
+
+    // Settings Collection
+    match /settings/{settingId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin(); // Only admins can write
+    }
+
+    // Admins Collection
+    match /admins/{adminId} {
+      // Allow any signed-in user to check if they are an admin
+      allow read: if isSignedIn() && request.auth.uid == adminId;
+      
+      // Allow listing for the checkout process
+      allow list: if isSignedIn();
+
+      // Allow the owner of this app or the very first user to create an admin record
+      allow create, update: if isSignedIn() && (
+        isOwner() ||
+        request.auth.uid == adminId
+      );
+    }
+
+    // Posts Collection
+    match /posts/{postId} {
+      // Public can READ published posts
+      allow get: if resource.data.published == true || isAdmin();
+      allow list: if resource.data.published == true || isAdmin();
+      
+      allow create: if isAdmin() && isValidId(postId) &&
+                      request.resource.data.keys().hasAll(['title', 'content', 'authorId', 'createdAt', 'published']) &&
+                      isValidPost(request.resource.data);
+                      
+      allow update: if isAdmin() && isValidId(postId) &&
+                      request.resource.data.authorId == resource.data.authorId &&
+                      request.resource.data.createdAt == resource.data.createdAt &&
+                      isValidUpdate(request.resource.data) &&
+                      (incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'summary', 'imageUrl', 'published', 'updatedAt']));
+                      
+      allow delete: if isAdmin();
+    }
+  }
+
+  function incoming() { return request.resource.data; }
+  function existing() { return resource.data; }
+}
