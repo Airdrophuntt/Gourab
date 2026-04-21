@@ -58,7 +58,7 @@ export default function Editor() {
     setUploadProgress(0);
     
     try {
-      const imgbbKey = import.meta.env.VITE_IMGBB_API_KEY;
+      const imgbbKey = process.env.VITE_IMGBB_API_KEY;
       
       if (imgbbKey) {
         // USE IMGBB (Free alternative)

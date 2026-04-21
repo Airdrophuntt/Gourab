@@ -81,6 +81,20 @@ service cloud.firestore {
                       
       allow delete: if isAdmin();
     }
+
+    // Comments sub-collection
+    match /posts/{postId}/comments/{commentId} {
+      // Public can read and write comments
+      allow read: if true;
+      allow create: if request.resource.data.authorName is string &&
+                      request.resource.data.authorName.size() <= 100 &&
+                      request.resource.data.content is string &&
+                      request.resource.data.content.size() <= 1000 &&
+                      request.resource.data.createdAt == request.time;
+      
+      // Only admins can delete or update comments (moderation)
+      allow update, delete: if isAdmin();
+    }
   }
 
   function incoming() { return request.resource.data; }

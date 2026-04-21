@@ -48,7 +48,7 @@ export default function AdminDashboard() {
     setUploadProgress(0);
     
     try {
-      const imgbbKey = import.meta.env.VITE_IMGBB_API_KEY;
+      const imgbbKey = process.env.VITE_IMGBB_API_KEY;
       let url = "";
 
       if (imgbbKey) {

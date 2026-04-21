@@ -27,6 +27,17 @@
       },
       "required": ["email", "role"]
     },
+    "Comment": {
+      "title": "Post Comment",
+      "description": "Visitor feedback on a legacy post",
+      "type": "object",
+      "properties": {
+        "authorName": { "type": "string", "description": "Name of the visitor" },
+        "content": { "type": "string", "description": "The comment text" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp" }
+      },
+      "required": ["authorName", "content", "createdAt"]
+    },
     "Settings": {
       "title": "Site Settings",
       "description": "Global configuration for the website",
@@ -40,6 +51,10 @@
     "/posts/{postId}": {
       "schema": "Post",
       "description": "Collection of all blog posts"
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "Visitor reviews and family feedback"
     },
     "/admins/{adminId}": {
       "schema": "Admin",

@@ -28,7 +28,7 @@ export default function Footer({ logoUrl }: FooterProps) {
           <div>
             <h4 className="text-heritage-gold font-medium mb-6 uppercase tracking-[0.2em] text-[10px] font-bold">Explore Content</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="/" className="hover:text-white transition-colors">Digital Archives</a></li>
+              <li><a href="/#archives" className="hover:text-white transition-colors">Digital Archives</a></li>
               <li><a href="/admin/login" className="hover:text-white transition-colors">Admin Access</a></li>
             </ul>
           </div>

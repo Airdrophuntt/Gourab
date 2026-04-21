@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
-import { Calendar, User, ArrowLeft, Twitter, Facebook, Linkedin, Link as LinkIcon, Check } from 'lucide-react';
+import { Calendar, User, ArrowLeft, Twitter, Facebook, Linkedin, Link as LinkIcon, Check, MessageSquare, Send } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Post {
@@ -16,11 +16,23 @@ interface Post {
   published: boolean;
 }
 
+interface Comment {
+  id: string;
+  authorName: string;
+  content: string;
+  createdAt: any;
+}
+
 export default function PostView() {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [newCommentName, setNewCommentName] = useState('');
+  const [newCommentContent, setNewCommentContent] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [commentSuccess, setCommentSuccess] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -39,7 +51,48 @@ export default function PostView() {
     };
 
     fetchPost();
+
+    // Set up comments listener
+    if (id) {
+      const q = query(
+        collection(db, 'posts', id, 'comments'),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const fetchedComments = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        } as Comment));
+        setComments(fetchedComments);
+      });
+
+      return () => unsubscribe();
+    }
   }, [id]);
+
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !newCommentName.trim() || !newCommentContent.trim() || submitting) return;
+
+    setSubmitting(true);
+    try {
+      await addDoc(collection(db, 'posts', id, 'comments'), {
+        authorName: newCommentName,
+        content: newCommentContent,
+        createdAt: serverTimestamp()
+      });
+      setNewCommentName('');
+      setNewCommentContent('');
+      setCommentSuccess(true);
+      setTimeout(() => setCommentSuccess(false), 3000);
+    } catch (error) {
+      console.error("Error adding comment:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -189,11 +242,92 @@ export default function PostView() {
         )}
 
         {/* Post Body */}
-        <div className="max-w-3xl mx-auto px-4">
+        <div className="max-w-3xl mx-auto px-4 pb-16 border-b border-stone-200">
           <div className="markdown-body prose prose-stone lg:prose-xl max-w-none">
             <ReactMarkdown>{post.content}</ReactMarkdown>
           </div>
         </div>
+
+        {/* Comment Section */}
+        <section className="max-w-3xl mx-auto px-4 py-20">
+          <div className="flex items-center gap-3 mb-12">
+            <MessageSquare size={24} className="text-heritage-gold" />
+            <h2 className="text-3xl font-serif font-bold">Family Feedback & Comments</h2>
+          </div>
+
+          {/* Comment Form */}
+          <div className="bg-white rounded-2xl p-8 shadow-sm border border-stone-100 mb-16">
+            <h3 className="font-serif text-xl font-bold mb-6">Leave a message</h3>
+            <form onSubmit={handleCommentSubmit} className="space-y-6">
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">Your Name</label>
+                <input 
+                  type="text"
+                  required
+                  value={newCommentName}
+                  onChange={(e) => setNewCommentName(e.target.value)}
+                  className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-heritage-gold focus:border-transparent outline-none transition-all font-serif"
+                  placeholder="e.g. Rahul Ghosh"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-2">Comment or Memory</label>
+                <textarea 
+                  required
+                  rows={4}
+                  value={newCommentContent}
+                  onChange={(e) => setNewCommentContent(e.target.value)}
+                  className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-heritage-gold focus:border-transparent outline-none transition-all font-serif resize-none"
+                  placeholder="Share your thoughts about this chronicle..."
+                />
+              </div>
+              <button 
+                type="submit"
+                disabled={submitting}
+                className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                  commentSuccess 
+                  ? 'bg-green-600 text-white' 
+                  : 'bg-heritage-ink text-white hover:bg-stone-800'
+                }`}
+              >
+                {submitting ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : commentSuccess ? (
+                  <><Check size={18} /> Message Sent Successfully</>
+                ) : (
+                  <><Send size={18} /> Post Comment</>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Comments List */}
+          <div className="space-y-8">
+            {comments.length > 0 ? (
+              comments.map((comment, idx) => (
+                <motion.div 
+                  key={comment.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="bg-[#fcf8f0] rounded-xl p-6 border-l-4 border-heritage-gold shadow-sm"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-serif font-bold text-lg text-heritage-ink">{comment.authorName}</h4>
+                    <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold">
+                      {comment.createdAt ? format(comment.createdAt.toDate(), 'MMM d, h:mm a') : 'Just now'}
+                    </span>
+                  </div>
+                  <p className="text-stone-700 leading-relaxed font-serif italic">"{comment.content}"</p>
+                </motion.div>
+              ))
+            ) : (
+              <div className="text-center py-10 text-stone-400 font-serif italic">
+                Be the first to share a memory or feedback.
+              </div>
+            )}
+          </div>
+        </section>
       </motion.div>
     </div>
   );
