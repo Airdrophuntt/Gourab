@@ -19,9 +19,9 @@ export default function Header({ user, isAdmin, logoUrl }: HeaderProps) {
 
   return (
     <header className="border-b border-heritage-gold/20 bg-heritage-bg/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-4 group">
-          <div className="w-14 h-14 rounded-full border-2 border-heritage-gold overflow-hidden shadow-lg transition-transform group-hover:scale-105 bg-white">
+          <div className="w-12 h-12 rounded-full border-2 border-heritage-gold overflow-hidden shadow-lg transition-transform group-hover:scale-105 bg-white">
             <img 
               src={logoUrl || "https://picsum.photos/seed/cultural-heritage/200/200"} 
               alt="Jamgram Ghoshbari Logo" 
@@ -32,8 +32,8 @@ export default function Header({ user, isAdmin, logoUrl }: HeaderProps) {
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-2xl lg:text-3xl font-serif font-bold tracking-tight text-heritage-accent group-hover:text-heritage-accent/80 transition-colors">
-              Jamgram <span className="font-sans font-normal text-xl lg:text-2xl ml-1">জামগ্রাম</span> Ghoshbari
+            <span className="text-xl lg:text-2xl font-serif font-bold tracking-tight text-heritage-accent group-hover:text-heritage-accent/80 transition-colors">
+              Jamgram Ghoshbari
             </span>
             <span className="text-[9px] lg:text-[10px] uppercase tracking-[0.3em] font-bold text-heritage-gold -mt-1 ml-1 opacity-80">Cultural Heritage Journal</span>
           </div>
