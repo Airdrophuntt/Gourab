@@ -23,14 +23,11 @@ export default function Header({ user, isAdmin, logoUrl }: HeaderProps) {
         <Link to="/" className="flex items-center gap-4 group">
           <div className="w-14 h-14 rounded-full border-2 border-heritage-gold overflow-hidden shadow-lg transition-transform group-hover:scale-105 bg-white">
             <img 
-              src={logoUrl || "/logo.jpg"} 
+              src={logoUrl || "https://picsum.photos/seed/cultural-heritage/200/200"} 
               alt="Jamgram Ghoshbari Logo" 
               className="w-full h-full object-cover"
               onError={(e) => {
-                // Fallback to a placeholder if neither dynamic nor local logo is found
-                if (!logoUrl) {
-                  e.currentTarget.src = "https://picsum.photos/seed/durga-idol/200/200";
-                }
+                e.currentTarget.src = "https://picsum.photos/seed/jamgram/200/200";
               }}
             />
           </div>

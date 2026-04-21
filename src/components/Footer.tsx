@@ -11,13 +11,11 @@ export default function Footer({ logoUrl }: FooterProps) {
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 rounded-full border border-heritage-gold/30 overflow-hidden shrink-0 bg-white">
                 <img 
-                  src={logoUrl || "/logo.jpg"} 
+                  src={logoUrl || "https://picsum.photos/seed/cultural-heritage/100/100"} 
                   alt="Logo" 
                   className="w-full h-full object-cover grayscale-[0.2]"
                   onError={(e) => {
-                    if (!logoUrl) {
-                      e.currentTarget.src = "https://picsum.photos/seed/durga-idol/100/100";
-                    }
+                    e.currentTarget.src = "https://picsum.photos/seed/jamgram/100/100";
                   }}
                 />
               </div>

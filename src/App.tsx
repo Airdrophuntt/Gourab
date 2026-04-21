@@ -19,7 +19,8 @@ import Footer from './components/Footer';
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [logoLoading, setLogoLoading] = useState(true);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,6 +33,8 @@ export default function App() {
         }
       } catch (err) {
         console.error("Logo fetch error:", err);
+      } finally {
+        setLogoLoading(false);
       }
     };
     fetchLogo();
@@ -44,10 +47,12 @@ export default function App() {
       } else {
         setIsAdmin(false);
       }
-      setLoading(false);
+      setAuthLoading(false);
     });
     return unsubscribe;
   }, []);
+
+  const loading = authLoading || logoLoading;
 
   if (loading) {
     return (
