@@ -95,6 +95,17 @@ service cloud.firestore {
       // Only admins can delete or update comments (moderation)
       allow update, delete: if isAdmin();
     }
+
+    // Newsletter Collection
+    match /newsletter/{subscriberId} {
+      allow create: if request.resource.data.email is string &&
+                      request.resource.data.email.size() <= 200 &&
+                      request.resource.data.email.matches('^[^@]+@[^@]+\\.[^@]+$') &&
+                      request.resource.data.createdAt == request.time;
+      
+      // Only admins can read or manage subscriptions
+      allow read, update, delete: if isAdmin();
+    }
   }
 
   function incoming() { return request.resource.data; }

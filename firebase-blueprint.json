@@ -38,6 +38,16 @@
       },
       "required": ["authorName", "content", "createdAt"]
     },
+    "NewsletterSubscription": {
+      "title": "Newsletter Subscription",
+      "description": "Email collection for family updates",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "createdAt"]
+    },
     "Settings": {
       "title": "Site Settings",
       "description": "Global configuration for the website",
@@ -55,6 +65,10 @@
     "/posts/{postId}/comments/{commentId}": {
       "schema": "Comment",
       "description": "Visitor reviews and family feedback"
+    },
+    "/newsletter/{subscriberId}": {
+      "schema": "NewsletterSubscription",
+      "description": "List of emails for heritage updates"
     },
     "/admins/{adminId}": {
       "schema": "Admin",

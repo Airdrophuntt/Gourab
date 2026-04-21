@@ -1,10 +1,39 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { Send, Check } from 'lucide-react';
 
 interface FooterProps {
   logoUrl?: string | null;
 }
 
 export default function Footer({ logoUrl }: FooterProps) {
+  const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || submitting) return;
+
+    setSubmitting(true);
+    try {
+      await addDoc(collection(db, 'newsletter'), {
+        email,
+        createdAt: serverTimestamp()
+      });
+      setSuccess(true);
+      setEmail('');
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err) {
+      console.error("Subscription error:", err);
+      alert("Failed to subscribe. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-heritage-ink text-stone-400 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,10 +58,31 @@ export default function Footer({ logoUrl }: FooterProps) {
           </div>
           <div>
             <h4 className="text-heritage-gold font-medium mb-6 uppercase tracking-[0.2em] text-[10px] font-bold">Explore Content</h4>
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-3 text-sm mb-10">
               <li><Link to="/#archives" className="hover:text-white transition-colors">Digital Archives</Link></li>
               <li><Link to="/admin/login" className="hover:text-white transition-colors">Admin Access</Link></li>
             </ul>
+
+            <h4 className="text-heritage-gold font-medium mb-4 uppercase tracking-[0.2em] text-[10px] font-bold">Subscribe to Chronicle</h4>
+            <p className="text-[10px] italic mb-4 leading-relaxed">Get notified when new historical accounts or family updates are published.</p>
+            <form onSubmit={handleSubscribe} className="relative max-w-xs">
+              <input 
+                type="email"
+                required
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-heritage-gold/50 transition-colors pr-12"
+              />
+              <button 
+                type="submit"
+                disabled={submitting || success}
+                className="absolute right-1 top-1 bottom-1 px-3 bg-heritage-gold text-heritage-ink rounded-md hover:bg-heritage-gold/80 transition-colors disabled:opacity-50"
+              >
+                {success ? <Check size={16} /> : <Send size={16} />}
+              </button>
+            </form>
+            {success && <p className="text-[10px] text-green-500 mt-2 font-bold uppercase tracking-widest">Thank you for joining our legacy!</p>}
           </div>
           <div>
             <h4 className="text-heritage-gold font-medium mb-6 uppercase tracking-[0.2em] text-[10px] font-bold">Legacy & Tradition</h4>
