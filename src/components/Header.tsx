@@ -32,28 +32,30 @@ export default function Header({ user, isAdmin, logoUrl }: HeaderProps) {
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-3xl font-serif font-bold tracking-tight text-heritage-accent group-hover:text-heritage-accent/80 transition-colors">Jamgram Ghoshbari</span>
-            <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-heritage-gold -mt-1 ml-1">Cultural Heritage Journal</span>
+            <span className="text-2xl lg:text-3xl font-serif font-bold tracking-tight text-heritage-accent group-hover:text-heritage-accent/80 transition-colors">
+              Jamgram <span className="font-sans font-normal text-xl lg:text-2xl ml-1">জামগ্রাম</span> Ghoshbari
+            </span>
+            <span className="text-[9px] lg:text-[10px] uppercase tracking-[0.3em] font-bold text-heritage-gold -mt-1 ml-1 opacity-80">Cultural Heritage Journal</span>
           </div>
         </Link>
 
-        <nav className="flex items-center space-x-6">
+        <nav className="flex items-center space-x-4 lg:space-x-8">
           {isAdmin ? (
             <>
-              <Link to="/admin" className="flex items-center space-x-1 text-heritage-ink/70 hover:text-heritage-accent font-medium transition-colors">
+              <Link to="/admin" className="flex items-center gap-2 text-heritage-ink/70 hover:text-heritage-accent font-medium transition-all hover:translate-y-[-1px]">
                 <LayoutDashboard size={18} />
-                <span className="hidden sm:inline">Archives</span>
+                <span className="hidden md:inline">Archives</span>
               </Link>
-              <Link to="/admin/new" className="flex items-center space-x-1 text-heritage-ink/70 hover:text-heritage-accent font-medium transition-colors">
+              <Link to="/admin/new" className="flex items-center gap-2 text-heritage-ink/70 hover:text-heritage-accent font-medium transition-all hover:translate-y-[-1px]">
                 <PenTool size={18} />
-                <span className="hidden sm:inline">New Entry</span>
+                <span className="hidden md:inline">New Entry</span>
               </Link>
               <button 
                 onClick={handleSignOut}
-                className="flex items-center space-x-1 text-heritage-ink/70 hover:text-heritage-accent font-medium transition-colors"
+                className="flex items-center gap-2 text-heritage-ink/70 hover:text-red-600 font-medium transition-all hover:translate-y-[-1px]"
               >
                 <LogOut size={18} />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden md:inline">Logout</span>
               </button>
             </>
           ) : user ? (
