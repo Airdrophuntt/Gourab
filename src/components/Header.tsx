@@ -67,12 +67,7 @@ export default function Header({ user, isAdmin, logoUrl }: HeaderProps) {
                 <LogOut size={18} />
                 <span>Logout</span>
               </button>
-          ) : (
-            <Link to="/admin/login" className="flex items-center space-x-1 text-heritage-ink/70 hover:text-heritage-accent font-medium transition-colors">
-              <UserIcon size={18} />
-              <span>Admin Access</span>
-            </Link>
-          )}
+          ) : null}
         </nav>
       </div>
     </header>
